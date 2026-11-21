@@ -36,8 +36,7 @@ type MetadataSignals = {
 
 export type LocalDetectorPayload = {
   provider: "local";
-  aiProbability: number;
-  humanProbability: number;
+  signalScore: number;
   topSource: string | null;
   provenanceHint: string | null;
   frameCount: number;
@@ -861,17 +860,17 @@ export async function analyzeFileLocally(file: File): Promise<{
         : label === "likely_human"
           ? "Scan Leans Authentic"
           : "Scan Is Inconclusive",
-    description: `AI Generated Media Detector analyzed ${frameText} locally in your browser to estimate how likely the file is AI generated vs a real capture. Signals include texture statistics, RGB channel correlation, recompression error (ELA), block variance, and embedded metadata. Dimensions: ${dims}. No data leaves your device.`,
+    description: `AI Generated Media Detector analyzed ${frameText} locally in your browser for pixel and metadata clues. This unvalidated heuristic does not establish authenticity or provide a probability of AI generation. Signals include texture statistics, RGB channel correlation, recompression error (ELA), block variance, and embedded metadata. Dimensions: ${dims}. No data leaves your device.`,
     promptSuggestion: `${mediaType === "video" ? "Short video" : "Photo"} reference with a ${tonePhrase(result.metrics)} look, natural lighting, coherent edges, visible material texture, balanced shadows and highlights, realistic camera detail, documentary composition`,
     syntheticScore: result.score,
     syntheticLabel: label,
     verdictConfidence: result.confidence,
     plainEnglishSummary:
       label === "likely_synthetic"
-        ? `Multiple pixel and metadata signals point toward AI generation or heavy processing. Score ${result.score}/100, confidence ${result.confidence}/100.${caveatText}`
+        ? `Multiple pixel and metadata signals point toward AI generation or heavy processing. Score ${result.score}/100, signal agreement ${result.confidence}/100.${caveatText}`
         : label === "likely_human"
-          ? `Texture, color channels, and metadata look consistent with a real camera capture. Score ${result.score}/100, confidence ${result.confidence}/100.${caveatText}`
-          : `Signals are mixed. The scan cannot confidently classify this file. Score ${result.score}/100, confidence ${result.confidence}/100.${caveatText}`,
+          ? `Texture, color channels, and metadata look consistent with a real camera capture. Score ${result.score}/100, signal agreement ${result.confidence}/100.${caveatText}`
+          : `Signals are mixed. The scan cannot establish the origin of this file. Score ${result.score}/100, signal agreement ${result.confidence}/100.${caveatText}`,
     evidenceForAuthentic: result.authentic.slice(0, 7),
     evidenceForSynthetic: result.synthetic.slice(0, 7),
     reasoning: `Local ensemble analysis sampled ${frameText} and computed forensic style metrics: smoothness (${round(result.metrics.smoothRatio * 100)}% smooth neighbors), residual noise (${round(result.metrics.noiseResidual)}), RGB channel correlation (${round(result.metrics.channelCorrelation, 3)}), block variance (${round(result.metrics.blockVarianceMean)}), ELA uniformity (${round(result.metrics.elaUniformity, 2)}), and ${round(result.metrics.posterizedBins, 0)}/64 luminance bands. Metadata: ${metadata.hasExif ? "EXIF present" : "no EXIF"}, ${metadata.generatorHints.length ? `generator hint (${metadata.generatorHints.join(", ")})` : "no generator string"}. The synthetic score ${result.score}/100 reflects a weighted blend of texture, color, ELA, metadata, and${mediaType === "video" ? " temporal" : ""} signals. Compression, screenshots, and social media re-exports can shift scores. Borderline cases stay uncertain rather than over confident.`,
@@ -897,8 +896,7 @@ export async function analyzeFileLocally(file: File): Promise<{
     analysis,
     detector: {
       provider: "local",
-      aiProbability: result.score / 100,
-      humanProbability: 1 - result.score / 100,
+      signalScore: result.score,
       topSource: sourceHint,
       provenanceHint,
       frameCount: frames.length,

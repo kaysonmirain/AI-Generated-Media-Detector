@@ -22,12 +22,12 @@ function labelDisplay(label: MediaAnalysis["syntheticLabel"]): {
   switch (label) {
     case "likely_human":
       return {
-        text: "Likely authentic",
+        text: "Camera-like signals",
         className: "bg-emerald-500/15 text-emerald-200 ring-emerald-500/30",
       };
     case "likely_synthetic":
       return {
-        text: "Likely synthetic / AI",
+        text: "Synthetic-like signals",
         className: "bg-rose-500/15 text-rose-200 ring-rose-500/35",
       };
     default:
@@ -156,8 +156,8 @@ export default function AiDetectorApp() {
               </span>
             </h1>
             <p className="mt-4 max-w-2xl text-pretty text-sm leading-relaxed text-zinc-400 sm:mt-5 sm:text-base sm:leading-relaxed">
-              Upload a photo or video to see how likely it is AI generated vs
-              real. Get a score, a verdict, and a full breakdown, all processed
+              Inspect pixel and metadata clues in photos or video. Results are
+              heuristic and do not verify authenticity. Get a score, a verdict, and a full breakdown, all processed
               locally in your browser.
             </p>
           </div>
@@ -338,14 +338,14 @@ export default function AiDetectorApp() {
                       </div>
                       <div className="text-right">
                         <p className="text-[10px] uppercase tracking-wider text-zinc-500">
-                          Synthetic score
+                          Heuristic score
                         </p>
                         <p className="text-3xl font-semibold tabular-nums text-white">
                           {analysis.syntheticScore}
                           <span className="text-lg text-zinc-500">/100</span>
                         </p>
                         <p className="mt-3 text-[10px] uppercase tracking-wider text-zinc-500">
-                          Confidence
+                          Signal agreement
                         </p>
                         <p className="text-lg font-semibold tabular-nums text-zinc-200">
                           {analysis.verdictConfidence}
@@ -365,16 +365,8 @@ export default function AiDetectorApp() {
                           Detection summary
                         </p>
                         <p className="mt-2 text-[13px] leading-relaxed text-cyan-100/90">
-                          AI likelihood:{" "}
-                          <span className="tabular-nums font-semibold text-white">
-                            {Math.round(detector.aiProbability * 100)}%
-                          </span>
-                          {" · "}
-                          Likely camera:{" "}
-                          <span className="tabular-nums font-semibold text-white">
-                            {Math.round(detector.humanProbability * 100)}%
-                          </span>
-                          {" · "}
+                          Heuristic index: {detector.signalScore}/100. This is not a
+                          calibrated probability. {" · "}
                           {detector.frameCount} frame
                           {detector.frameCount === 1 ? "" : "s"} sampled
                           {detector.topSource &&

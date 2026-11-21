@@ -18,3 +18,7 @@ npm run dev
 ```
 
 Then open [http://localhost:3000](http://localhost:3000).
+
+## Interpreting results
+
+This browser tool computes pixel and metadata heuristics. Its scores are indices, not probabilities, and signal agreement is not calibrated confidence. It has no measured detection accuracy on a representative labeled dataset. Compression, editing, screenshots, and simple digital artwork can produce similar signals; use original provenance and independent verification before drawing conclusions.

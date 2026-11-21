@@ -6,7 +6,7 @@ export const analysisSchema = z.object({
   promptSuggestion: z.string(),
   syntheticScore: z.number().min(0).max(100),
   syntheticLabel: z.enum(["likely_human", "uncertain", "likely_synthetic"]),
-  /** How confident the model is in syntheticLabel (0 = guessing, 100 = very confident). */
+  /** Agreement among heuristic signals; not calibrated confidence or a probability. */
   verdictConfidence: z.number().min(0).max(100),
   /** 2–4 short sentences anyone can understand; no jargon. */
   plainEnglishSummary: z.string(),
